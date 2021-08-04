@@ -117,7 +117,7 @@ export async function setVisulaizationData(
     let solr_url_4;
     if (levelThree) {
       solr_url_4 = await fetch(
-        `${API}/api/v1/url_4b_u?parentArea=${parentArea}&indicator=${indicator}&timeperiod=${timeperiod}` , {
+        `${API}/api/v1/url_4u?parentArea=${parentArea}&indicator=${indicator}&timeperiod=${timeperiod}` , {
           headers:{
             Authorization:`${token}`
           }
@@ -128,7 +128,7 @@ export async function setVisulaizationData(
       // );
     } else {
       solr_url_4 = await fetch(
-        `${API}/api/v1/url_4c_u?area=${area}&indicator=${indicator}&timeperiod=${timeperiod}` , {
+        `${API}/api/v1/url_4u?parentArea=${area}&indicator=${indicator}&timeperiod=${timeperiod}` , {
           headers:{
             Authorization:`${token}`
           }

@@ -67,7 +67,7 @@ export async function setVisulaizationData(
   setSelDistrictsData
 ) {
   const url_1 = await fetch(
-    `${API}/api/v1/url_1u?area=${area}&indicator=${indicator}` , {
+    `${API}/v1/url_1u?area=${area}&indicator=${indicator}` , {
       headers:{
         Authorization:`${token}`
       }
@@ -77,24 +77,27 @@ export async function setVisulaizationData(
   // const url_1 =  await fetch(`${solr_domain}/solr/${solr_core}/select?fl=timeperiod_id%2Ctimeperiod%2Cunit_id%2Cunit_name%2Cdata_value%2Cdata_value_num%2Csubgroup_id%2Csubgroup_name%2Csubgroup_category%2Cstart_date%2Cend_date&fq=area_id%3A${area}&fq=indicator_id%3A${indicator}&fq=subgroup_id%3A6&omitHeader=true&q=*%3A*&rows=400&sort=timeperiod_id%20asc`);
   // console.log('URL', url_1);
   const body_1 = await url_1.json();
+  const dataList1 = body_1.result.docs.filter(data => data.subgroup_id === 6)
+  setIndicatorTrend(dataList1);
 
-  setIndicatorTrend(body_1.result.docs);
-
-  const url_2 = await fetch(
-    `${API}/api/v1/url_2u?area=${area}&indicator=${indicator}&timeperiod=${timeperiod}` , {
-      headers:{
-        Authorization:`${token}`
-      }
-    }
-  );
+  // const url_2 = await fetch(
+  //   `${API}/api/v1/url_2u?area=${area}&indicator=${indicator}&timeperiod=${timeperiod}` , {
+  //     headers:{
+  //       Authorization:`${token}`
+  //     }
+  //   }
+  // );
 
   
 
   // const url_2 = await fetch(
   //   `${solr_domain}/solr/${solr_core}/select?fl=unit_id%2Cunit_name%2Csubgroup_name%2Csub_category%2Cdata_value%2Cdata_value_num%2Csubgroup_id%2Csubgroup_name_subgroup_category&fq=area_id%3A${area}&fq=indicator_id%3A${indicator}&fq=timeperiod_id%3A${timeperiod}&omitHeader=true&q=*%3A*&rows=100&sort=subgroup_order%20asc`
   // );
-  const body_2 = await url_2.json();
-  setIndicatorBar(body_2.result.docs);
+
+
+  const dataList2 = body_1.result.docs.filter(data => data.timeperiod_id === timeperiod)
+  // const body_2 = await url_2.json();
+  setIndicatorBar(dataList2);
 
   if (level === 1) {
     const solr_url_3 = await fetch(
@@ -138,23 +141,28 @@ export async function setVisulaizationData(
     const solr_body_4 = await solr_url_4.json();
     setSelStateData(solr_body_4.result.docs);
   }
- 
-  const solr_switchurl = await fetch(
-    `${API}/api/v1/url_5u?indicator=${indicator}&timeperiod=${timeperiod}` , {
-      headers:{
-        Authorization:`${token}`
-      }
-    }
-  );
 
-  // const solr_switchurl = await fetch(
-  //   `${solr_domain}/solr/${solr_core}/select?fl=indicator_id%2Cindicator_name%2Ctimeperiod_id%2Ctimeperiod%2Cunit_id%2Cunit_name%2Cdata_value%2Cdata_value_num%2Carea_id%2Carea_code%2Carea_name%2Carea_level&fq=area_level%3A3&fq=indicator_id%3A${indicator}&fq=subgroup_id%3A6&fq=timeperiod_id%3A${timeperiod}&q=*%3A*&rows=10000&omitHeader=true`
-  // );
-  const solr_body_5 = await solr_switchurl.json();
-  if (solr_body_5.result.docs.length) {
-    setSwitchDisplay(true);
-    setSelDistrictsData(solr_body_5.result.docs);
-  } else setSwitchDisplay(false);
+ // show toggle button only if timeperiod id belongs to arrayTimeperiod
+  const arrayTimeperiod = [20,3,11,14,7,12,10,17,4,18,24]
+  if (arrayTimeperiod.includes(timeperiod) && area === 1){
+    const solr_switchurl = await fetch(
+      `${API}/api/v1/url_5u?indicator=${indicator}&timeperiod=${timeperiod}` , {
+        headers:{
+          Authorization:`${token}`
+        }
+      }
+    );
+  
+    // const solr_switchurl = await fetch(
+    //   `${solr_domain}/solr/${solr_core}/select?fl=indicator_id%2Cindicator_name%2Ctimeperiod_id%2Ctimeperiod%2Cunit_id%2Cunit_name%2Cdata_value%2Cdata_value_num%2Carea_id%2Carea_code%2Carea_name%2Carea_level&fq=area_level%3A3&fq=indicator_id%3A${indicator}&fq=subgroup_id%3A6&fq=timeperiod_id%3A${timeperiod}&q=*%3A*&rows=10000&omitHeader=true`
+    // );
+    const solr_body_5 = await solr_switchurl.json();
+    if (solr_body_5.result.docs.length) {
+      setSwitchDisplay(true);
+      setSelDistrictsData(solr_body_5.result.docs);
+    } else setSwitchDisplay(false);
+  }
+  
 }
 
 export async function setCardData(tab, area, setIndicatorDetail) {
